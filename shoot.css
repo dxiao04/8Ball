@@ -1,0 +1,29 @@
+.startpage{
+    font-family: cursive;
+    background: repeating-linear-gradient(to right, #728C00, #BDF516, yellow, #6AA121, #E2F516, #728C00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color:transparent;
+    animation:textanim 2s linear infinite;
+    background-size: 400% 100%;
+    text-align:center;
+  }   
+  @keyframes textanim{
+      0%,100%{
+          background-position: 0 0;
+      }
+      50%{
+          background-position: 100% 0;
+      }
+  }
+  .center{
+    border: 5px groove;
+    border-color: green;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+  }
+
+  
