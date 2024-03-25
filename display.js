@@ -23,6 +23,10 @@ $(function() {
     }
   
     $(cue).mousedown(function() {
+      cueDown($(cue));
+    });
+
+    function cueDown(){
       $(this).attr("r", "35");
       $(document).mousemove(function(e) {
   
@@ -43,9 +47,7 @@ $(function() {
           $(line).attr("stroke", color);
         }
       });
-  
-  
-    });
+    }
     $(document).mouseup(function(e) {
       
       $(cue).attr("r", "28");
@@ -55,24 +57,31 @@ $(function() {
       var yDiff = $(line).attr("y2") - $(line).attr("y1");
       xDiff = xDiff * 5;
       yDiff = yDiff * 5;
-      setLine();
-      $(document).unbind('mousemove');
+      
       if (xDiff != 0 || yDiff != 0) {
-        $.post("post.html",{
-          xVel: xDiff,
-          yVel: yDiff
+        $.post("post",{
+          xVel: xDiff*-1,
+          yVel: yDiff*-1
         },
         function(rep){
-          var str = JSON.stringify(rep);
-          var arr = str.split(",");
-          setInterval("anim()", 10);
+          //var str = JSON.stringify(rep);
+          var arr = rep.split(",");
+          setInterval(anim, 10);
           var i = 0;
+          //alert(arr[0]);
           function anim(){
-            $(document).replaceWith(arr[i]);
+            $("svg#table").replaceWith(arr[i]);
+            i++;
             if (arr.length == i){
-              return;
+              clearInterval();
+              setLine();
+              $(document).unbind('mousemove');
+              $(cue).mousedown(function() {
+                cueDown($(cue));
+              });
             }
           }
+          
         }
         )
         .fail(function(){
@@ -80,7 +89,8 @@ $(function() {
         })
         
       }
-      
+      setLine();
+      $(document).unbind('mousemove');
     });
   
     function setLine() { // put it with cue ball

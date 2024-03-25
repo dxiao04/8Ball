@@ -21,22 +21,11 @@ MAX_OBJECTS = phylib.PHYLIB_MAX_OBJECTS;
 FRAME_RATE = 0.01;
 # add more here
 
-HEADER = """<link rel="stylesheet" type="text/css" href="display.css">\n
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
-<script src='display.js'></script>\n
-<div id="parent" style="position: relative;background-color:#FDEEF4">\n
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n
-<svg id="table" width="280" height="550" viewBox="-25 -25 1400 2750" \
+HEADER = """<svg id="table" width="280" height="550" viewBox="-25 -25 1400 2750" \
 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" \
 style="padding:10%;">\n
 <rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" />\n""";
-FOOTER = """</svg>\n
-<svg id="myCanvas" width = "100%" height = "100%" viewBox="-25 -25 1400 2750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >\n
-<line x1="0" y1="0" x2="0" y2="0" stroke='#FF0000' stroke-width="5" />\n
-</svg>\n
-</div>\n""";
+FOOTER = """</svg>\n""";
 
 ################################################################################
 # the standard colours of pool balls
@@ -598,7 +587,7 @@ class Game():
     def shoot(self, gameName, playerName, table, xvel, yvel):
         #db = Database();
         #shotID = db.newShot(gameName, playerName);
-        retArr =[];
+        retArr ="";
         cb = table.cueBall(table);
         
         tempX = cb.obj.still_ball.pos.x;
@@ -631,11 +620,12 @@ class Game():
                 frame = i * FRAME_RATE;
                 tempTable = table.roll(frame);
                 tempTable.time = startTime + frame;
-                retArr.append(tempTable.svg());
+                retArr += (tempTable.svg() + ",");
                 #tableID = db.writeTable(tempTable);
                 #cur.execute(""" INSERT  INTO TableShot
                                         #VALUES (?, ?)""",(tableID, shotID));
                 #db.conn.commit();
             table = table.segment();
+            print("time is " + str(table.time));
         #db.close();
         return retArr;

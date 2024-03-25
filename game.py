@@ -102,33 +102,49 @@ class MyHandler(BaseHTTPRequestHandler):
                 f.write(table.svg());
                 f.close();
                 f = open("table.svg", 'r');
-                content = """ """;
+                content = """<link rel="stylesheet" type="text/css" href="display.css">\n
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
+<script src='display.js'></script>\n
+<div id="parent" style="position: relative;background-color:#FDEEF4">\n
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n""";
                 content += f.read();
+                content += """<svg id="myCanvas" width = "100%" height = "100%" viewBox="-25 -25 1400 2750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >\n
+<line x1="0" y1="0" x2="0" y2="0" stroke='#FF0000' stroke-width="5" />\n
+</svg>\n
+</div>\n"""
                 f.close();
                 self.send_response( 200 ); # OK
                 self.send_header( "Content-type", "text/html" );
                 self.send_header( "Content-length", len( content ) );
                 self.end_headers();
                 self.wfile.write( bytes( content, "utf-8" ) );
-        elif parsed.path in ["/post.html"]:
+        elif parsed.path in ["/post"]:
             form_data = cgi.FieldStorage(
                                 fp=self.rfile,
                                 headers=self.headers,
                                 environ={'REQUEST_METHOD':'POST'})
-            xVel = float(form_data.getvalue('xVel'))/10;
-            yVel = float(form_data.getvalue('yVel'))/10;
-            print(xVel, yVel);
+            xVel = float(form_data.getvalue('xVel'));
+            yVel = float(form_data.getvalue('yVel'));
+            #print(xVel, yVel);
             arr = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
             #print(arr);
             #print("done");
-            print(len(arr));
-            jsonStr = json.dumps(arr);
+            #print(len(arr));
+
+            #strArr = ','.join(arr);
+
+            #print(strArr);
+            #jsonStr = json.dumps(arr);
             self.send_response( 200 );
-            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Type', 'text/html')
+            self.send_header( "Content-length", len( arr ) );
             self.end_headers()
-            self.wfile.write(jsonStr.encode(encoding='utf_8'))
+            self.wfile.write( bytes( arr, "utf-8" ))
             #print(jsonStr);
-            #print("done");
+            print("done");
+            
         
 if __name__ == "__main__":
     httpd = HTTPServer( ( 'localhost', int(sys.argv[1]) ), MyHandler );
