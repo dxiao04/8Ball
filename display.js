@@ -58,8 +58,14 @@ $(function() {
       var yDiff = $(line).attr("y2") - $(line).attr("y1");
       if (xDiff != 0 || yDiff != 0) {
         //alert("x diff: " + xDiff + ", y diff: " + yDiff);
-        
-
+        var xhr = new XMLHttpRequest();
+        var data = {
+          xVel: xDiff,
+          yVel: yDiff
+        };
+        xhr.open('POST', '/display.html', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(data);
       }
       setLine();
       $(document).unbind('mousemove');
