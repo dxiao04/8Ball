@@ -21,14 +21,23 @@ MAX_OBJECTS = phylib.PHYLIB_MAX_OBJECTS;
 FRAME_RATE = 0.01;
 # add more here
 
-HEADER = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="700" height="1375" viewBox="-25 -25 1400 2750"
-xmlns="http://www.w3.org/2000/svg"
-xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" />""";
-FOOTER = """</svg>\n""";
+HEADER = """<link rel="stylesheet" type="text/css" href="display.css">\n
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
+<script src='display.js'></script>\n
+
+<div id="parent" style="position: relative;background-color:#FDEEF4">\n
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n
+<svg id="table" width="280" height="550" viewBox="-25 -25 1400 2750" \
+xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" \
+style="padding:10%;">\n
+<rect width="1350" height="2700" x="0" y="0" fill="#C0D0C0" />\n""";
+FOOTER = """</svg>\n
+<svg id="myCanvas" width = "100%" height = "100%" viewBox="-25 -25 1400 2750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >\n
+<line x1="0" y1="0" x2="0" y2="0" stroke='#FF0000' stroke-width="5" />\n
+</svg>\n
+</div>\n""";
 
 ################################################################################
 # the standard colours of pool balls
@@ -353,6 +362,39 @@ class Table( phylib.phylib_table ):
                 if (ball.obj.still_ball.number == 0):
                    cb = ball;
         return cb;
+    def setupTable(self, table):
+        balls = [];
+        
+        balls.append(StillBall(1, Coordinate(675,675)));
+        balls.append(StillBall(2, Coordinate(617,467)));
+        balls.append(StillBall(3, Coordinate(617,573)));
+        balls.append(StillBall(4, Coordinate(587, 521)));
+        balls.append(StillBall(5, Coordinate(763, 521)));
+        balls.append(StillBall(6, Coordinate(733, 467)));
+        balls.append(StillBall(7, Coordinate(558, 467)));
+        balls.append(StillBall(8, Coordinate(675, 573)));
+        balls.append(StillBall(9, Coordinate(704, 624)));
+        balls.append(StillBall(10, Coordinate(646, 521)));
+        balls.append(StillBall(11, Coordinate(675, 467)));
+        balls.append(StillBall(12, Coordinate(704, 521)));
+        balls.append(StillBall(13, Coordinate(733, 573)));
+        balls.append(StillBall(14, Coordinate(646, 624)));
+        balls.append(StillBall(15, Coordinate(792, 467)));
+        balls.append(StillBall(0, Coordinate(675, 2025)));
+        for i in range (16):
+            #print(balls[i]);
+            table += balls[i];
+
+
+        
+    
+    """ ============================ FOR TESTING ==================="""
+    def write_svg( table_id, table ):
+        os.remove("temp.txt");
+        with open( "temp.txt", "a" ) as fp:
+            fp.write( table.svg() );
+            fp.write("NEXT FILE\n");
+        
 
 """=========================================================================================
     ========================================================================================="""

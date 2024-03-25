@@ -30,6 +30,26 @@ class MyHandler(BaseHTTPRequestHandler):
 
             self.wfile.write( bytes( content, "utf-8" ) );
             fp.close();
+        elif parsed.path in ["/display.css"]:
+            fp = open( '.'+self.path );
+            content = fp.read();
+            self.send_response( 200 ); # OK
+            self.send_header( "Content-type", "text/css" );
+            self.send_header( "Content-length", len( content ) );
+            self.end_headers();
+
+            self.wfile.write( bytes( content, "utf-8" ) );
+            fp.close();
+        elif parsed.path in ["/display.js"]:
+            fp = open( '.'+self.path );
+            content = fp.read();
+            self.send_response( 200 ); # OK
+            self.send_header( "Content-type", "text/javascript" );
+            self.send_header( "Content-length", len( content ) );
+            self.end_headers();
+
+            self.wfile.write( bytes( content, "utf-8" ) );
+            fp.close();
         else:
             self.send_response( 404 );
             self.end_headers();
@@ -68,59 +88,23 @@ class MyHandler(BaseHTTPRequestHandler):
                 p1N = form_data["p1_name"].value;
                 p2N = form_data["p2_name"].value;
 
-                game = Physics.Game(gameName=gameName, player1Name=p1N, player2Name=p2N);
+                #game = Physics.Game(gameName=gameName, player1Name=p1N, player2Name=p2N);
 
-                accX = 0;
-                accY = 0;
-                if ballLen > Physics.VEL_EPSILON:
-                    accX = (velX * (-1)) / ballLen * Physics.DRAG;
-                    accY = (velY * (-1)) / ballLen * Physics.DRAG;
                 table = Physics.Table();
-                sbPos = Physics.Coordinate((float(form_data["sb_x"].value)), (float(form_data["sb_y"].value)));
-                sb = Physics.StillBall((int(form_data["sb_number"].value)), sbPos);
-                rbPos = Physics.Coordinate((float(form_data["rb_x"].value)), (float(form_data["rb_y"].value)));
-                vel = Physics.Coordinate(velX, velY);
-                acc = Physics.Coordinate(accX, accY);
-                rb = Physics.RollingBall((int(form_data["rb_number"].value)), rbPos, vel, acc);
-                table.add_object(sb);
-                table.add_object(rb);
-                i = 0;
-                while(table): # writes tables
-                    if (table != None):
-                        f = open("table-%d.svg" %i, 'w');
-                        f.write(table.svg());
-                        f.close();
-                    new_table = table.segment();
-                    table = new_table;
-                    i += 1;
-                
-                # makes the page look nice
-                content += "<body style=""background-color:floralwhite;font-family:cursive;color:tomato;text-align:center"">\n\
-                                <div style=""background-color:palegoldenrod;width:max-content;display:inline-block;margin:0 auto;"">\n\
-                                <h3>original positions and velocities:</h3>";
-                content += "<h4 style=""font-family:monospace"">still ball position: (%s, %s)<br> \n" % (form_data["sb_x"].value, form_data["sb_y"].value);
-                content += "rolling ball position: (%s, %s)<br>\n " % (form_data["rb_x"].value, form_data["rb_y"].value);
-                content += "rolling ball velX: %s velY: %s</h4>\n " % (form_data["rb_dx"].value, form_data["rb_dy"].value);
-                content += "<a href = ""shoot.html"" style = ""color:tomato;""> go back </a></div><br>\n";
-                i = 0;
-                content += "<div style = ""display:inline-block"">"
-                for img in os.listdir(currentDir): # displays tables in order
-                    if tablePattern.match("/" + img):
-                        content += "<img src = ""table-%s.svg"" style = ""padding:5px;height:55%%""><br>\n" % i;
-                        i += 1;
-                content += "<a href = ""shoot.html"" style = ""color:tomato;""> go back </a><br>\n";
-                content += "</div>"
-            self.send_response( 200 ); # OK
-            self.send_header( "Content-type", "text/html" );
-            self.send_header( "Content-length", len( content ) );
-            self.end_headers();
-
-            # send it to the browser
-            self.wfile.write( bytes( content, "utf-8" ) );
-        else:
-            self.send_response( 404 );
-            self.end_headers();
-            self.wfile.write( bytes( "404: %s not found" % self.path, "utf-8" ) );
+                table.setupTable(table);
+                f = open("table.svg", 'w');
+                f.write(table.svg());
+                f.close();
+                f = open("table.svg", 'r');
+                content = """ """;
+                content += f.read();
+                f.close();
+                self.send_response( 200 ); # OK
+                self.send_header( "Content-type", "text/html" );
+                self.send_header( "Content-length", len( content ) );
+                self.end_headers();
+                self.wfile.write( bytes( content, "utf-8" ) );
+        
 if __name__ == "__main__":
     httpd = HTTPServer( ( 'localhost', int(sys.argv[1]) ), MyHandler );
     print( "Server listing in port:  ", int(sys.argv[1]) );
