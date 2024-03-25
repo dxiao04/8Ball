@@ -4,7 +4,8 @@ $(function() {
     var line2 = "#myCanvas";
     $(line2).attr("visibility", "hidden");
     setLine();
-  
+    
+
     function svgPoint(screenX, screenY, query) {
       var p = new DOMPoint(screenX, screenY);
       var svg = document.querySelector(query);
@@ -50,25 +51,36 @@ $(function() {
       $(cue).attr("r", "28");
       $(line).attr("visibility", "hidden");
       $(line2).attr("visibility", "hidden");
-      var coord = svgPoint(e.clientX, e.clientY, "line");
-  
-      var len = dist($(line).attr("x1"), coord.x,
-        $(line).attr("y1"), coord.y);
       var xDiff = $(line).attr("x2") - $(line).attr("x1");
       var yDiff = $(line).attr("y2") - $(line).attr("y1");
-      if (xDiff != 0 || yDiff != 0) {
-        //alert("x diff: " + xDiff + ", y diff: " + yDiff);
-        var xhr = new XMLHttpRequest();
-        var data = {
-          xVel: xDiff,
-          yVel: yDiff
-        };
-        xhr.open('POST', '/display.html', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send(data);
-      }
+      xDiff = xDiff * 5;
+      yDiff = yDiff * 5;
       setLine();
       $(document).unbind('mousemove');
+      if (xDiff != 0 || yDiff != 0) {
+        $.post("post.html",{
+          xVel: xDiff,
+          yVel: yDiff
+        },
+        function(rep){
+          var str = JSON.stringify(rep);
+          var arr = str.split(",");
+          setInterval("anim()", 10);
+          var i = 0;
+          function anim(){
+            $(document).replaceWith(arr[i]);
+            if (arr.length == i){
+              return;
+            }
+          }
+        }
+        )
+        .fail(function(){
+          alert("oops");
+        })
+        
+      }
+      
     });
   
     function setLine() { // put it with cue ball

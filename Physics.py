@@ -24,7 +24,6 @@ FRAME_RATE = 0.01;
 HEADER = """<link rel="stylesheet" type="text/css" href="display.css">\n
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
 <script src='display.js'></script>\n
-
 <div id="parent" style="position: relative;background-color:#FDEEF4">\n
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
@@ -576,7 +575,7 @@ class Database():
 class Game():
     db = None;
     def __init__( self, gameID=None, gameName=None, player1Name=None, player2Name=None):
-        db = Database();
+        db = Database(reset=True);
         db.createDB();
         if (isinstance(gameID, int)):
             if not (gameName is None and player1Name is None and player2Name is None):
@@ -597,9 +596,9 @@ class Game():
         db.close();
 
     def shoot(self, gameName, playerName, table, xvel, yvel):
-        db = Database();
-        shotID = db.newShot(gameName, playerName);
-        
+        #db = Database();
+        #shotID = db.newShot(gameName, playerName);
+        retArr =[];
         cb = table.cueBall(table);
         
         tempX = cb.obj.still_ball.pos.x;
@@ -620,7 +619,7 @@ class Game():
         cb.obj.rolling_ball.acc.y = accY;
         cb.obj.rolling_ball.number = 0;
         
-        cur = db.conn.cursor();
+        #cur = db.conn.cursor();
         while table:
             startTime = table.time;
             temp = table.segment();
@@ -632,9 +631,11 @@ class Game():
                 frame = i * FRAME_RATE;
                 tempTable = table.roll(frame);
                 tempTable.time = startTime + frame;
-                tableID = db.writeTable(tempTable);
-                cur.execute(""" INSERT  INTO TableShot
-                                        VALUES (?, ?)""",(tableID, shotID));
-                db.conn.commit();
+                retArr.append(tempTable.svg());
+                #tableID = db.writeTable(tempTable);
+                #cur.execute(""" INSERT  INTO TableShot
+                                        #VALUES (?, ?)""",(tableID, shotID));
+                #db.conn.commit();
             table = table.segment();
-        db.close();
+        #db.close();
+        return retArr;

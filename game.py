@@ -5,9 +5,15 @@ from urllib.parse import urlparse, parse_qsl;
 import os;
 import re; 
 import math;
+import json;
 import Physics;
-
+game = None;
+gameName = "";
+p1N = "";
+p2N = "";
+table = None;
 class MyHandler(BaseHTTPRequestHandler):
+
     def do_GET(self):
         parsed = urlparse(self.path);
         if parsed.path in ["/shoot.html"]:
@@ -65,13 +71,8 @@ class MyHandler(BaseHTTPRequestHandler):
                                                       self.headers['Content-Type'],
                                                     } 
                                         );
-            currentDir = os.getcwd();
-            tablePattern = re.compile(r"\/table-\d+.svg");
+            
             content = "";
-            for file in os.listdir(currentDir):
-                if tablePattern.match("/" + file):
-                    #print("removing " + os.path.join(currentDir, file));
-                    os.remove(os.path.join(currentDir, file));
             
             # checks for invalid values
             if (len(form_data) < 3):
@@ -84,12 +85,17 @@ class MyHandler(BaseHTTPRequestHandler):
                 content +=  "<h4 style=""font-family:monospace"">player names must be less than 64 characters<br> \n";
                 content += "<a href = ""shoot.html"" style = ""color:tomato;""> go back </a></h4><br>\n";
             else: # makes the game
+                global gameName
                 gameName = form_data["game_name"].value;
-                p1N = form_data["p1_name"].value;
+                global p1N 
+                p1N= form_data["p1_name"].value;
+                global p2N 
                 p2N = form_data["p2_name"].value;
 
+                global game
                 game = Physics.Game(gameName=gameName, player1Name=p1N, player2Name=p2N);
 
+                global table
                 table = Physics.Table();
                 table.setupTable(table);
                 f = open("table.svg", 'w');
@@ -104,6 +110,25 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header( "Content-length", len( content ) );
                 self.end_headers();
                 self.wfile.write( bytes( content, "utf-8" ) );
+        elif parsed.path in ["/post.html"]:
+            form_data = cgi.FieldStorage(
+                                fp=self.rfile,
+                                headers=self.headers,
+                                environ={'REQUEST_METHOD':'POST'})
+            xVel = float(form_data.getvalue('xVel'))/10;
+            yVel = float(form_data.getvalue('yVel'))/10;
+            print(xVel, yVel);
+            arr = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            #print(arr);
+            #print("done");
+            print(len(arr));
+            jsonStr = json.dumps(arr);
+            self.send_response( 200 );
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(jsonStr.encode(encoding='utf_8'))
+            #print(jsonStr);
+            #print("done");
         
 if __name__ == "__main__":
     httpd = HTTPServer( ( 'localhost', int(sys.argv[1]) ), MyHandler );
