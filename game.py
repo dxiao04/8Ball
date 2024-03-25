@@ -88,7 +88,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 p1N = form_data["p1_name"].value;
                 p2N = form_data["p2_name"].value;
 
-                #game = Physics.Game(gameName=gameName, player1Name=p1N, player2Name=p2N);
+                game = Physics.Game(gameName=gameName, player1Name=p1N, player2Name=p2N);
 
                 table = Physics.Table();
                 table.setupTable(table);

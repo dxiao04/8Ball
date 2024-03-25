@@ -46,6 +46,7 @@ $(function() {
   
     });
     $(document).mouseup(function(e) {
+      
       $(cue).attr("r", "28");
       $(line).attr("visibility", "hidden");
       $(line2).attr("visibility", "hidden");
@@ -56,7 +57,9 @@ $(function() {
       var xDiff = $(line).attr("x2") - $(line).attr("x1");
       var yDiff = $(line).attr("y2") - $(line).attr("y1");
       if (xDiff != 0 || yDiff != 0) {
-        console.log("x diff: " + xDiff + ", y diff: " + yDiff);
+        //alert("x diff: " + xDiff + ", y diff: " + yDiff);
+        
+
       }
       setLine();
       $(document).unbind('mousemove');

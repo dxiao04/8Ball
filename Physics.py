@@ -54,9 +54,9 @@ BALL_COLOURS = [
     "GREEN",
     "BROWN",
     "BLACK",
-    "LIGHTYELLOW",
-    "LIGHTBLUE",
-    "PINK",             # no LIGHTRED
+    "KHAKI",
+    "DEEPSKYBLUE",
+    "HOTPINK",             # no LIGHTRED
     "MEDIUMPURPLE",     # no LIGHTPURPLE
     "LIGHTSALMON",      # no LIGHTORANGE
     "LIGHTGREEN",
