@@ -590,7 +590,7 @@ class Game():
     def shoot(self, gameName, playerName, table, xvel, yvel):
         #db = Database();
         #shotID = db.newShot(gameName, playerName);
-        retArr ="";
+        retArr =[];
         cb = table.cueBall(table);
         
         tempX = cb.obj.still_ball.pos.x;
@@ -612,7 +612,7 @@ class Game():
         cb.obj.rolling_ball.number = 0;
         
         #cur = db.conn.cursor();
-        cueGone = 0;
+        cueGone = 1;
         while table:
             startTime = table.time;
             temp = table.segment();
@@ -625,13 +625,21 @@ class Game():
                 tempTable = table.roll(frame);
                 tempTable.time = startTime + frame;
                 
-                retArr += (tempTable.svg() + ",");
+                retArr.append(tempTable.svg() + ",");
                 #tableID = db.writeTable(tempTable);
                 #cur.execute(""" INSERT  INTO TableShot
                                         #VALUES (?, ?)""",(tableID, shotID));
                 #db.conn.commit();
             table = table.segment();
             print("time is " + str(table.time));
-            retArr += table.svg();
+            retArr.append(table.svg());
+        for i in table:
+            if isinstance(i, StillBall):
+                if i.obj.still_ball.number == 0:
+                    cueGone = 0;
+            elif isinstance(i, RollingBall):
+                if i.obj.rolling_ball.number == 0:
+                    cueGone = 0;
+        
         #db.close();
-        return retArr, table;
+        return retArr, table, cueGone;

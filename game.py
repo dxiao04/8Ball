@@ -105,12 +105,12 @@ class MyHandler(BaseHTTPRequestHandler):
                 content = """<link rel="stylesheet" type="text/css" href="display.css">\n
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
 <script src='display.js'></script>\n
-<div id="parent" style="position: relative;background-color:#FDEEF4">\n
+<div id="parent" style="position: relative;background-color:#FDEEF4">\n<div id = "inner">
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n""";
                 content += f.read();
-                content += """<svg id="myCanvas" width = "100%" height = "100%" viewBox="-25 -25 1400 2750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >\n
+                content += """</div> <svg id="myCanvas" width = "100%" height = "100%" viewBox="-25 -25 1400 2750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >\n
 <line x1="0" y1="0" x2="0" y2="0" stroke='#FF0000' stroke-width="5" />\n
 </svg>\n
 </div>\n"""
@@ -128,7 +128,8 @@ class MyHandler(BaseHTTPRequestHandler):
             xVel = float(form_data.getvalue('xVel'));
             yVel = float(form_data.getvalue('yVel'));
             #print(xVel, yVel);
-            arr, table = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            arr, table, cueGone = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            
             #print(arr);
             #print("done");
             #print(len(arr));
@@ -137,11 +138,17 @@ class MyHandler(BaseHTTPRequestHandler):
 
             #print(strArr);
             #jsonStr = json.dumps(arr);
+            strArr = ''.join(str(x) for x in arr);
+            if cueGone == 1:
+                strArr += (",cuegone");
+            else:
+                strArr += (",cuethere");
+            #print(strArr)
             self.send_response( 200 );
             self.send_header('Content-Type', 'text/html')
-            self.send_header( "Content-length", len( arr ) );
+            self.send_header( "Content-length", len( strArr ) );
             self.end_headers()
-            self.wfile.write( bytes( arr, "utf-8" ))
+            self.wfile.write( bytes( strArr, "utf-8" ))
             #print(jsonStr);
             print("done");
             
