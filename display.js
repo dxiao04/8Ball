@@ -64,11 +64,11 @@ $(function() {
           yVel: yDiff*-1
         },
         function(rep){
-          //var str = JSON.stringify(rep);
+
           var arr = rep.split(",");
           setInterval(anim, 10);
           var i = 0;
-          //alert(arr[0]);
+
           function anim(){
             $("svg#table").replaceWith(arr[i]);
             i++;
@@ -79,6 +79,7 @@ $(function() {
               $(cue).mousedown(function() {
                 cueDown($(cue));
               });
+              
             }
           }
           

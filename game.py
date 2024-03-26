@@ -128,7 +128,7 @@ class MyHandler(BaseHTTPRequestHandler):
             xVel = float(form_data.getvalue('xVel'));
             yVel = float(form_data.getvalue('yVel'));
             #print(xVel, yVel);
-            arr = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            arr, table = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
             #print(arr);
             #print("done");
             #print(len(arr));

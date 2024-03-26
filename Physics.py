@@ -349,6 +349,9 @@ class Table( phylib.phylib_table ):
             if isinstance(ball,StillBall):
                 if (ball.obj.still_ball.number == 0):
                    cb = ball;
+            elif isinstance(ball, RollingBall):
+                if (ball.obj.rolling_ball.number == 0):
+                    cb = ball;
         return cb;
     def setupTable(self, table):
         balls = [];
@@ -609,6 +612,7 @@ class Game():
         cb.obj.rolling_ball.number = 0;
         
         #cur = db.conn.cursor();
+        cueGone = 0;
         while table:
             startTime = table.time;
             temp = table.segment();
@@ -620,6 +624,7 @@ class Game():
                 frame = i * FRAME_RATE;
                 tempTable = table.roll(frame);
                 tempTable.time = startTime + frame;
+                
                 retArr += (tempTable.svg() + ",");
                 #tableID = db.writeTable(tempTable);
                 #cur.execute(""" INSERT  INTO TableShot
@@ -627,5 +632,6 @@ class Game():
                 #db.conn.commit();
             table = table.segment();
             print("time is " + str(table.time));
+            retArr += table.svg();
         #db.close();
-        return retArr;
+        return retArr, table;
