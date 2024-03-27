@@ -12,7 +12,6 @@ gameName = "";
 p1N = "";
 p2N = "";
 table = None;
-
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -129,18 +128,38 @@ class MyHandler(BaseHTTPRequestHandler):
             xVel = float(form_data.getvalue('xVel'));
             yVel = float(form_data.getvalue('yVel'));
             #print(xVel, yVel);
-            #arr, table, cueGone = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
-            game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            arr, table, cueGone = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            
+            #print(arr);
+            #print("done");
+            #print(len(arr));
 
+            #strArr = ','.join(arr);
+
+            #print(strArr);
+            #jsonStr = json.dumps(arr);
+            #strArr = ''.join(str(x) for x in arr);
+            if cueGone == 1:
+                arr += (",cuegone");
+            else:
+                arr += (",cuethere");
             #print(strArr)
             self.send_response( 200 );
             self.send_header('Content-Type', 'text/html')
-            self.send_header( "Content-length", len( " " ) );
+            self.send_header( "Content-length", len( arr ) );
             self.end_headers()
-            self.wfile.write( bytes( " ", "utf-8" ))
+            self.wfile.write( bytes( arr, "utf-8" ))
             #print(jsonStr);
             print("done");
-            
+        elif parsed.path in ["/respawn"]:
+            respawnSVG = table.respawn();
+            self.send_response( 200 );
+            self.send_header('Content-Type', 'text/html')
+            self.send_header( "Content-length", len( respawnSVG ) );
+            self.end_headers()
+            self.wfile.write( bytes( respawnSVG, "utf-8" ))
+            print(respawnSVG);
+            print("respawned");
         
 if __name__ == "__main__":
     httpd = HTTPServer( ( 'localhost', int(sys.argv[1]) ), MyHandler );

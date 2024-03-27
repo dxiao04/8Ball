@@ -59,26 +59,28 @@ $(function() {
 		yDiff = yDiff * 10;
 
 		if (xDiff != 0 || yDiff != 0) {
-			$.post("post", { // POST REQUEST.
+			$.post("post", {
 						xVel: xDiff * -1,
 						yVel: yDiff * -1
 					},
 					function(rep) {
 
-						/*var arr = rep.split(",");
+						var arr = rep.split(",");
 						setInterval(anim, 10);
 						var i = 0;
-						alert(arr[arr.length - 1]);
+						//alert(arr[arr.length - 1]);
 
 						function anim() {
 							i++;
 
 							if (arr.length - 1 == (i)) {
 								if (arr[i] == "cuegone") {
-									alert("CUEGONE");
-									// respawn cue?
+									//alert("CUEGONE");
+									$("div#inner").html(arr[i-1]);
+									respawnCue();
 								} else {
-									alert("CUETHERE");
+									//alert("CUETHERE");
+									$("div#inner").html(arr[i-1]);
 									clearInterval();
 									refreshCue();
 								}
@@ -86,7 +88,7 @@ $(function() {
 								$("div#inner").html(arr[i]);
 							}
 
-						}*/
+						}
 
 					}
 				)
@@ -98,6 +100,21 @@ $(function() {
 		setLine();
 		$(document).unbind('mousemove');
 	});
+
+	function respawnCue(){
+		$.post("respawn", { }, 
+		function(rep){
+			$('#table').fadeOut("slow", function(){
+				
+				$(this).replaceWith(rep);
+				$('#table').fadeIn("slow");
+				refreshCue();
+			});
+		})
+		.fail(function(){
+			alert("respawn failed");
+		})
+	}
 
 	function refreshCue() {
 		setLine();
