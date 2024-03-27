@@ -12,6 +12,7 @@ gameName = "";
 p1N = "";
 p2N = "";
 table = None;
+
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -128,27 +129,15 @@ class MyHandler(BaseHTTPRequestHandler):
             xVel = float(form_data.getvalue('xVel'));
             yVel = float(form_data.getvalue('yVel'));
             #print(xVel, yVel);
-            arr, table, cueGone = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
-            
-            #print(arr);
-            #print("done");
-            #print(len(arr));
+            #arr, table, cueGone = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
 
-            #strArr = ','.join(arr);
-
-            #print(strArr);
-            #jsonStr = json.dumps(arr);
-            strArr = ''.join(str(x) for x in arr);
-            if cueGone == 1:
-                strArr += (",cuegone");
-            else:
-                strArr += (",cuethere");
             #print(strArr)
             self.send_response( 200 );
             self.send_header('Content-Type', 'text/html')
-            self.send_header( "Content-length", len( strArr ) );
+            self.send_header( "Content-length", len( " " ) );
             self.end_headers()
-            self.wfile.write( bytes( strArr, "utf-8" ))
+            self.wfile.write( bytes( " ", "utf-8" ))
             #print(jsonStr);
             print("done");
             

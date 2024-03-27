@@ -36,14 +36,14 @@ $(function() {
 
 			var len = dist($(line).attr("x1"), coord.x,
 				$(line).attr("y1"), coord.y);
-			len = len * 5;
+			len = len * 10;
 			//console.log(len);
 			var color;
-			if (len <= 4000) {
+			if (len <= 10000) {
 				$(line).attr("x2", coord.x);
 				$(line).attr("y2", coord.y);
-				color = "hsl(" + (180 - ((len / 4000) * 180)) + ", 100%, 60%)";
-				$(line).attr("stroke-width", (len / 4000) * 25);
+				color = "hsl(" + (180 - ((len / 10000) * 180)) + ", 100%, 60%)";
+				$(line).attr("stroke-width", (len / 10000) * 25);
 				$(line).attr("stroke", color);
 			}
 		});
@@ -55,17 +55,17 @@ $(function() {
 		$(line2).attr("visibility", "hidden");
 		var xDiff = $(line).attr("x2") - $(line).attr("x1");
 		var yDiff = $(line).attr("y2") - $(line).attr("y1");
-		xDiff = xDiff * 5;
-		yDiff = yDiff * 5;
+		xDiff = xDiff * 10;
+		yDiff = yDiff * 10;
 
 		if (xDiff != 0 || yDiff != 0) {
-			$.post("post", {
+			$.post("post", { // POST REQUEST.
 						xVel: xDiff * -1,
 						yVel: yDiff * -1
 					},
 					function(rep) {
 
-						var arr = rep.split(",");
+						/*var arr = rep.split(",");
 						setInterval(anim, 10);
 						var i = 0;
 						alert(arr[arr.length - 1]);
@@ -86,7 +86,7 @@ $(function() {
 								$("div#inner").html(arr[i]);
 							}
 
-						}
+						}*/
 
 					}
 				)
