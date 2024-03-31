@@ -12,6 +12,7 @@ gameName = "";
 p1N = "";
 p2N = "";
 table = None;
+
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -106,6 +107,20 @@ class MyHandler(BaseHTTPRequestHandler):
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
 <script src='display.js'></script>\n
 <div id="parent" style="position: relative;background-color:#FDEEF4">\n<div id = "inner">
+<div id = "playerinfo">
+<div class="column" id = "player1">
+<p id = "p1N">""" + p1N +"""</p>
+<p id = "p1S">
+  0 point(s)
+</p>
+</div>
+<div class="column" id = "player2">
+<p id = "p2N">""" + p2N +"""</p>
+<p id = "p2S">
+  0 point(s)
+</p>
+</div>
+</div>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n""";
@@ -128,27 +143,22 @@ class MyHandler(BaseHTTPRequestHandler):
             xVel = float(form_data.getvalue('xVel'));
             yVel = float(form_data.getvalue('yVel'));
             #print(xVel, yVel);
-            arr, table, cueGone = game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            arr, table, cueGone, existingBalls= game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
             
-            #print(arr);
-            #print("done");
-            #print(len(arr));
-
-            #strArr = ','.join(arr);
-
-            #print(strArr);
-            #jsonStr = json.dumps(arr);
-            #strArr = ''.join(str(x) for x in arr);
+            existingArr = "#".join(str(x) for x in existingBalls);
+            print(existingArr);
+            strArr = ''.join(str(x) for x in arr);
             if cueGone == 1:
-                arr += (",cuegone");
+                strArr += (",cuegone");
             else:
-                arr += (",cuethere");
+                strArr += (",cuethere");
+
             #print(strArr)
             self.send_response( 200 );
             self.send_header('Content-Type', 'text/html')
-            self.send_header( "Content-length", len( arr ) );
+            self.send_header( "Content-length", len( strArr ) );
             self.end_headers()
-            self.wfile.write( bytes( arr, "utf-8" ))
+            self.wfile.write( bytes( strArr, "utf-8" ))
             #print(jsonStr);
             print("done");
         elif parsed.path in ["/respawn"]:
@@ -158,8 +168,10 @@ class MyHandler(BaseHTTPRequestHandler):
             self.send_header( "Content-length", len( respawnSVG ) );
             self.end_headers()
             self.wfile.write( bytes( respawnSVG, "utf-8" ))
-            print(respawnSVG);
+            #print(respawnSVG);
             print("respawned");
+
+            
         
 if __name__ == "__main__":
     httpd = HTTPServer( ( 'localhost', int(sys.argv[1]) ), MyHandler );

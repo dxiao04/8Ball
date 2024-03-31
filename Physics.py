@@ -2,7 +2,9 @@ import phylib;
 import os;
 import sqlite3;
 import math; 
-
+currBallID = 0;
+currTableID = 0;
+existingBalls = [0] * 16;
 ################################################################################
 # import constants from phylib to global varaibles
 BALL_RADIUS   = phylib.PHYLIB_BALL_RADIUS;
@@ -32,7 +34,7 @@ FOOTER = """</svg>\n""";
 # if you are curious check this out:  
 # https://billiards.colostate.edu/faq/ball/colors/
 
-'''BALL_COLOURS = [ 
+BALL_COLOURS = [ 
     "WHITE",
     "YELLOW",
     "BLUE",
@@ -49,26 +51,7 @@ FOOTER = """</svg>\n""";
     "LIGHTSALMON",      # no LIGHTORANGE
     "LIGHTGREEN",
     "SANDYBROWN",       # no LIGHTBROWN 
-    ];'''
-
-BALL_COLOURS = [ 
-    "WHITE",
-    "CRIMSON",
-    "DARKRED",
-    "RED",
-    "INDIANRED",
-    "LIGHTCORAL",
-    "LIGHTPINK",
-    "SALMON",
-    "BLACK",
-    "ROYALBLUE",
-    "DEEPSKYBLUE",
-    "MEDIUMBLUE",             # no LIGHTRED
-    "TURQUOISE",     # no LIGHTPURPLE
-    "STEELBLUE",      # no LIGHTORANGE
-    "CADETBLUE",
-    "DODGERBLUE",       # no LIGHTBROWN 
-];
+    ];
 
 ################################################################################
 class Coordinate( phylib.phylib_coord ):
@@ -398,6 +381,7 @@ class Table( phylib.phylib_table ):
     def respawn(self):
         self += (StillBall(0, Coordinate(675, 2025)));
         return self.svg();
+
         
     
     """ ============================ FOR TESTING ==================="""
@@ -511,11 +495,36 @@ class Database():
 
     def writeTable(self, table):
         cur = self.conn.cursor();
+        global currTableID;
+        currTableID += 1;
         cur.execute("""INSERT INTO TTable (TIME)
                                 VALUES (?);""", (table.time,));
         cur.execute("""SELECT TABLEID FROM TTable;""");
-        tableID = max(cur.fetchall())[0];
+        #tableID = max(cur.fetchall())[0];
+        tableID = currTableID;
+        global currBallID;
+        
+        ballTuples =[];
+        ballTableTuples = [];
         for object in table:
+            if isinstance(object, StillBall):
+                currBallID += 1;
+                ballTuples.append( (None, object.obj.still_ball.number,\
+                                        object.obj.still_ball.pos.x, object.obj.still_ball.pos.y, "NULL", "NULL"));
+                ballTableTuples.append((currBallID, tableID));
+            elif isinstance(object, RollingBall):
+                currBallID += 1;
+                ballTuples.append((None, object.obj.rolling_ball.number,\
+                                        object.obj.rolling_ball.pos.x, object.obj.rolling_ball.pos.y, \
+                                        object.obj.rolling_ball.vel.x, object.obj.rolling_ball.vel.y));
+                ballTableTuples.append((currBallID, tableID));
+        cur.executemany("""INSERT INTO Ball
+                                        VALUES (?, ?, ?, ?, ?, ?);""", ballTuples);
+        cur.executemany("""INSERT INTO BallTable
+                                        VALUES (?, ?);""", ballTableTuples);
+            
+        
+        '''for object in table:
             if isinstance( object, StillBall ):
                 cur.execute("""INSERT INTO Ball
                                         VALUES (?, ?, ?, ?, ?, ?);""", (None, object.obj.still_ball.number,\
@@ -531,13 +540,9 @@ class Database():
                 ballID = max(cur.execute("""SELECT BALLID FROM Ball;""").fetchall())[0];
                 cur.execute("""INSERT INTO BallTable
                                         VALUES (?, ?);""", (ballID, tableID));
+        '''
         self.conn.commit();
 
-        '''data = cur.execute("""SELECT * FROM BallTable""");
-        dataText = cur.fetchall();
-        for column in data.description: 
-            print(column[0]);
-        print ('\n'.join(str(e) for e in dataText));'''
 
         cur.close();
         return tableID;
@@ -609,11 +614,10 @@ class Game():
         db.close();
 
     def shoot(self, gameName, playerName, table, xvel, yvel):
-        #db = Database();
+        db = Database();
         #shotID = db.newShot(gameName, playerName);
         retArr =[];
         cb = table.cueBall(table);
-        retStr = "";
         
         tempX = cb.obj.still_ball.pos.x;
         tempY = cb.obj.still_ball.pos.y;
@@ -634,7 +638,8 @@ class Game():
         cb.obj.rolling_ball.number = 0;
         
         #cur = db.conn.cursor();
-        cueGone = 1;
+        cueGone = 1; #TEMPORARY. RETURN ARRAY OF SUNK BALLS INSTEAD
+        print(table);
         while table:
             startTime = table.time;
             temp = table.segment();
@@ -646,37 +651,32 @@ class Game():
                 frame = i * FRAME_RATE;
                 tempTable = table.roll(frame);
                 tempTable.time = startTime + frame;
-                #print(str(i) + "....");
-                tempStr = tempTable.svg();
-                retStr = ",".join((retStr, tempStr));
+                
+                retArr.append(tempTable.svg() + ",");
 
-                #retArr.append(tempTable.svg() + ",");
-            
-
-                #tableID = db.writeTable(tempTable);
-                #cur.execute(""" INSERT  INTO TableShot
-                                        #VALUES (?, ?)""",(tableID, shotID));
-                #db.conn.commit();
             table = table.segment();
-            print("time is " + str(table.time));
-            #retArr.append(table.svg());
-            tempStr = table.svg();
-            retStr = ",".join((retStr, tempStr));
-        ballArr = [0] * 16;
-
-        for i in range(10, 26):
+            #print("time is " + str(table.time));
+            retArr.append(table.svg());
             
-
+        #print(table);
+        global existingBalls;
+        existingBalls = [0] * 16;
+        for i in range (0, 16):
+            if (table[10 + i] is not None):
+                if isinstance(table[10 + i], StillBall):
+                    existingBalls[table[10 + i].obj.still_ball.number] = 1;
             
-
-        """for i in table:
+        print(existingBalls);
+        
+        
+        for i in table:
             if isinstance(i, StillBall):
                 if i.obj.still_ball.number == 0:
                     cueGone = 0;
             elif isinstance(i, RollingBall):
                 if i.obj.rolling_ball.number == 0:
                     cueGone = 0;
-        """
+        
         #db.close();
-        print(table);
-        return retStr, table, cueGone;
+        return retArr, table, cueGone, existingBalls;
+

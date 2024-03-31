@@ -3,6 +3,8 @@ $(function() {
 	var line = "line"
 	var line2 = "#myCanvas";
 	$(line2).attr("visibility", "hidden");
+	var p1Points = 0;
+	var p2Points = 0;
 	setLine();
 
 
@@ -36,14 +38,14 @@ $(function() {
 
 			var len = dist($(line).attr("x1"), coord.x,
 				$(line).attr("y1"), coord.y);
-			len = len * 10;
+			len = len * 5;
 			//console.log(len);
 			var color;
-			if (len <= 10000) {
+			if (len <= 4000) {
 				$(line).attr("x2", coord.x);
 				$(line).attr("y2", coord.y);
-				color = "hsl(" + (180 - ((len / 10000) * 180)) + ", 100%, 60%)";
-				$(line).attr("stroke-width", (len / 10000) * 25);
+				color = "hsl(" + (180 - ((len / 4000) * 180)) + ", 100%, 60%)";
+				$(line).attr("stroke-width", (len / 4000) * 25);
 				$(line).attr("stroke", color);
 			}
 		});
@@ -55,11 +57,11 @@ $(function() {
 		$(line2).attr("visibility", "hidden");
 		var xDiff = $(line).attr("x2") - $(line).attr("x1");
 		var yDiff = $(line).attr("y2") - $(line).attr("y1");
-		xDiff = xDiff * 10;
-		yDiff = yDiff * 10;
+		xDiff = xDiff * 5;
+		yDiff = yDiff * 5;
 
 		if (xDiff != 0 || yDiff != 0) {
-			$.post("post", {
+			$.post("post", { // POST REQUEST.
 						xVel: xDiff * -1,
 						yVel: yDiff * -1
 					},
@@ -76,11 +78,9 @@ $(function() {
 							if (arr.length - 1 == (i)) {
 								if (arr[i] == "cuegone") {
 									//alert("CUEGONE");
-									$("div#inner").html(arr[i-1]);
 									respawnCue();
 								} else {
 									//alert("CUETHERE");
-									$("div#inner").html(arr[i-1]);
 									clearInterval();
 									refreshCue();
 								}
@@ -101,6 +101,13 @@ $(function() {
 		$(document).unbind('mousemove');
 	});
 
+	function refreshCue() {
+		setLine();
+		$(document).unbind('mousemove');
+		$(cue).mousedown(function() {
+			cueDown($(cue));
+		});
+	}
 	function respawnCue(){
 		$.post("respawn", { }, 
 		function(rep){
@@ -116,13 +123,7 @@ $(function() {
 		})
 	}
 
-	function refreshCue() {
-		setLine();
-		$(document).unbind('mousemove');
-		$(cue).mousedown(function() {
-			cueDown($(cue));
-		});
-	}
+
 
 	function setLine() { // put it with cue ball
 		var coord = svgToCanvas($(cue).attr("cx"), $(cue).attr("cy")); // convert cue to real coordinates
