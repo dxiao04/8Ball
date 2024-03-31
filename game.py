@@ -106,21 +106,23 @@ class MyHandler(BaseHTTPRequestHandler):
                 content = """<link rel="stylesheet" type="text/css" href="display.css">\n
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>\n
 <script src='display.js'></script>\n
-<div id="parent" style="position: relative;background-color:#FDEEF4">\n<div id = "inner">
+<div id="parent" style="position: relative;background-color:#FDEEF4">\n
 <div id = "playerinfo">
 <div class="column" id = "player1">
 <p id = "p1N">""" + p1N +"""</p>
 <p id = "p1S">
-  0 point(s)
+  7 ball(s) left
 </p>
 </div>
 <div class="column" id = "player2">
 <p id = "p2N">""" + p2N +"""</p>
 <p id = "p2S">
-  0 point(s)
+  7 ball(s) left
 </p>
 </div>
 </div>
+<div id = "inner">
+
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>\n
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \
 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n""";
@@ -130,11 +132,11 @@ class MyHandler(BaseHTTPRequestHandler):
 </svg>\n
 </div>\n"""
                 f.close();
-                self.send_response( 200 ); # OK
-                self.send_header( "Content-type", "text/html" );
-                self.send_header( "Content-length", len( content ) );
-                self.end_headers();
-                self.wfile.write( bytes( content, "utf-8" ) );
+            self.send_response( 200 ); # OK
+            self.send_header( "Content-type", "text/html" );
+            self.send_header( "Content-length", len( content ) );
+            self.end_headers();
+            self.wfile.write( bytes( content, "utf-8" ) );
         elif parsed.path in ["/post"]:
             form_data = cgi.FieldStorage(
                                 fp=self.rfile,
@@ -148,10 +150,8 @@ class MyHandler(BaseHTTPRequestHandler):
             existingArr = "#".join(str(x) for x in existingBalls);
             print(existingArr);
             strArr = ''.join(str(x) for x in arr);
-            if cueGone == 1:
-                strArr += (",cuegone");
-            else:
-                strArr += (",cuethere");
+            strArr += ",";
+            strArr += existingArr;
 
             #print(strArr)
             self.send_response( 200 );
