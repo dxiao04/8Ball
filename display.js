@@ -93,18 +93,18 @@ $(function() {
 								if (ballArr[8] == 0 ){
 									if (currP == 0){
 										if (arraySum(p1Arr) > 0){
-											alert("PLAYER 1 LOST BY ILLEGALLY POTTING THE 8 BALL");
+											loser(document.getElementById("p1N").innerHTML);
 										}
 										else{
-											alert("player 1 wins");
+											winner(document.getElementById("p1N").innerHTML);
 										}
 									}
 									else if (currP == 1){
 										if (arraySum(p2Arr) > 0){
-											alert("PLAYER 2 LOST BY ILLEGALLY POTTING THE 8 BALL");
+											loser(document.getElementById("p2N").innerHTML);
 										}
 										else{
-											alert("player 2 wins");
+											winner(document.getElementById("p2N").innerHTML);
 										}
 									}
 								}
@@ -196,14 +196,18 @@ $(function() {
 		$.post("loser", { // POST REQUEST.
 			loserPlayer: player
 		}, function (rep){
-			
+			document.open();
+        	document.write(rep);
+        	document.close();
 		});
 	}
 	function winner (player){
 		$.post("winner", { // POST REQUEST.
-			winner: player
+			winnerPlayer: player
 		}, function (rep){
-			
+			document.open();
+        	document.write(rep);
+        	document.close();
 		});
 	}
 

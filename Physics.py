@@ -34,7 +34,7 @@ FOOTER = """</svg>\n""";
 # if you are curious check this out:  
 # https://billiards.colostate.edu/faq/ball/colors/
 
-BALL_COLOURS = [ 
+'''BALL_COLOURS = [ 
     "WHITE",
     "YELLOW",
     "BLUE",
@@ -51,7 +51,27 @@ BALL_COLOURS = [
     "LIGHTSALMON",      # no LIGHTORANGE
     "LIGHTGREEN",
     "SANDYBROWN",       # no LIGHTBROWN 
-    ];
+    ];'''
+
+BALL_COLOURS = [ 
+    "WHITE",
+    "CRIMSON",
+    "DARKRED",
+    "RED",
+    "INDIANRED",
+    "LIGHTCORAL",
+    "LIGHTPINK",
+    "SALMON",
+    "BLACK",
+    "ROYALBLUE",
+    "DEEPSKYBLUE",
+    "MEDIUMBLUE",             # no LIGHTRED
+    "TURQUOISE",     # no LIGHTPURPLE
+    "STEELBLUE",      # no LIGHTORANGE
+    "CADETBLUE",
+    "DODGERBLUE",       # no LIGHTBROWN 
+];
+
 
 ################################################################################
 class Coordinate( phylib.phylib_coord ):
@@ -593,7 +613,7 @@ class Database():
 class Game():
     db = None;
     def __init__( self, gameID=None, gameName=None, player1Name=None, player2Name=None):
-        db = Database(reset=True);
+        db = Database();
         db.createDB();
         if (isinstance(gameID, int)):
             if not (gameName is None and player1Name is None and player2Name is None):
@@ -614,8 +634,7 @@ class Game():
         db.close();
 
     def shoot(self, gameName, playerName, table, xvel, yvel):
-        db = Database();
-        #shotID = db.newShot(gameName, playerName);
+
         retArr =[];
         cb = table.cueBall(table);
         
@@ -637,8 +656,7 @@ class Game():
         cb.obj.rolling_ball.acc.y = accY;
         cb.obj.rolling_ball.number = 0;
         
-        #cur = db.conn.cursor();
-        cueGone = 1; #TEMPORARY. RETURN ARRAY OF SUNK BALLS INSTEAD
+
         print(table);
         while table:
             startTime = table.time;
@@ -665,18 +683,7 @@ class Game():
             if (table[10 + i] is not None):
                 if isinstance(table[10 + i], StillBall):
                     existingBalls[table[10 + i].obj.still_ball.number] = 1;
-            
-        print(existingBalls);
-        
-        
-        for i in table:
-            if isinstance(i, StillBall):
-                if i.obj.still_ball.number == 0:
-                    cueGone = 0;
-            elif isinstance(i, RollingBall):
-                if i.obj.rolling_ball.number == 0:
-                    cueGone = 0;
         
         #db.close();
-        return retArr, table, cueGone, existingBalls;
+        return retArr, table, existingBalls;
 

@@ -148,7 +148,7 @@ class MyHandler(BaseHTTPRequestHandler):
             arr, table, cueGone, existingBalls= game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
             
             existingArr = "#".join(str(x) for x in existingBalls);
-            print(existingArr);
+            #print(existingArr);
             strArr = ''.join(str(x) for x in arr);
             strArr += ",";
             strArr += existingArr;
@@ -170,7 +170,57 @@ class MyHandler(BaseHTTPRequestHandler):
             self.wfile.write( bytes( respawnSVG, "utf-8" ))
             #print(respawnSVG);
             print("respawned");
+        elif parsed.path in ["/loser"]:
+            form_data = cgi.FieldStorage( fp=self.rfile,
+                                          headers=self.headers,
+                                          environ = { 'REQUEST_METHOD': 'POST',
+                                                      'CONTENT_TYPE': 
+                                                      self.headers['Content-Type'],
+                                                    } 
+                                        );
+            content = """
+<body style = "background-color: red">
+<div style= "text-align: center;color:white">
+<h1 >""" + form_data.getvalue("loserPlayer") + """<br>LOST BY ILLEGALLY POTTING THE CUE BALL<br><br><br><br><br>
 
+</h1>
+<h2>
+<a href = "shoot.html" style="color:white"> new game </a><br>
+</h2>
+</div>
+
+</body>"""
+            self.send_response( 200 );
+            self.send_header('Content-Type', 'text/html')
+            self.send_header( "Content-length", len( content ) );
+            self.end_headers()
+            self.wfile.write( bytes( content, "utf-8" ))
+
+        elif parsed.path in ["/winner"]:
+            form_data = cgi.FieldStorage( fp=self.rfile,
+                                          headers=self.headers,
+                                          environ = { 'REQUEST_METHOD': 'POST',
+                                                      'CONTENT_TYPE': 
+                                                      self.headers['Content-Type'],
+                                                    } 
+                                        );
+            content = """
+<body style = "background-color: green">
+<div style= "text-align: center;color:white">
+<h1 >""" + form_data.getvalue("winnerPlayer") + """<br>WON BY LEGALLY POTTING THE CUE BALL<br><br><br><br><br>
+
+</h1>
+<h2>
+<a href = "shoot.html" style="color:white"> new game </a><br>
+</h2>
+</div>
+
+</body>"""
+            self.send_response( 200 );
+            self.send_header('Content-Type', 'text/html')
+            self.send_header( "Content-length", len( content ) );
+            self.end_headers()
+            self.wfile.write( bytes( content, "utf-8" ))
             
         
 if __name__ == "__main__":
