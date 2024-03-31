@@ -145,7 +145,7 @@ class MyHandler(BaseHTTPRequestHandler):
             xVel = float(form_data.getvalue('xVel'));
             yVel = float(form_data.getvalue('yVel'));
             #print(xVel, yVel);
-            arr, table, cueGone, existingBalls= game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
+            arr, table, existingBalls= game.shoot(gameName = gameName, playerName= p1N, table = table, xvel = xVel, yvel = yVel);
             
             existingArr = "#".join(str(x) for x in existingBalls);
             #print(existingArr);
