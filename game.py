@@ -109,13 +109,13 @@ class MyHandler(BaseHTTPRequestHandler):
 <div id="parent" style="position: relative;background-color:#FDEEF4">\n
 <div id = "playerinfo">
 <div class="column" id = "player1">
-<p id = "p1N">""" + p1N +"""</p>
+<p id = "p1N">""" + p1N +""" (red)</p>
 <p id = "p1S">
   7 ball(s) left
 </p>
 </div>
 <div class="column" id = "player2">
-<p id = "p2N">""" + p2N +"""</p>
+<p id = "p2N">""" + p2N +""" (blue)</p>
 <p id = "p2S">
   7 ball(s) left
 </p>
