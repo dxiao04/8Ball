@@ -181,7 +181,7 @@ class MyHandler(BaseHTTPRequestHandler):
             content = """
 <body style = "background-color: red">
 <div style= "text-align: center;color:white">
-<h1 >""" + form_data.getvalue("loserPlayer") + """<br>LOST BY ILLEGALLY POTTING THE CUE BALL<br><br><br><br><br>
+<h1 >""" + form_data.getvalue("loserPlayer") + """<br>LOST BY ILLEGALLY POTTING THE 8 BALL<br><br><br><br><br>
 
 </h1>
 <h2>
@@ -207,7 +207,7 @@ class MyHandler(BaseHTTPRequestHandler):
             content = """
 <body style = "background-color: green">
 <div style= "text-align: center;color:white">
-<h1 >""" + form_data.getvalue("winnerPlayer") + """<br>WON BY LEGALLY POTTING THE CUE BALL<br><br><br><br><br>
+<h1 >""" + form_data.getvalue("winnerPlayer") + """<br>WON BY LEGALLY POTTING THE 8 BALL<br><br><br><br><br>
 
 </h1>
 <h2>
