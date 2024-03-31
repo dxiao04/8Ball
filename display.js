@@ -5,11 +5,12 @@ $(function() {
 	$(line2).attr("visibility", "hidden");
 	var p1 = "#p1S";
 	var p2 = "#p2S";
-	var p1Balls = 0;
-	var p2Balls = 0;
+	var p1Balls = 7;
+	var p2Balls = 7;
 	var currP = Math.floor(Math.random() * 2);
 	alert("player " + (currP + 1) + " is first");
 	setLine();
+	updateColors();
 
 	function svgPoint(screenX, screenY, query) {
 		var p = new DOMPoint(screenX, screenY);
@@ -92,7 +93,7 @@ $(function() {
 								if (ballArr[8] == 0 ){
 									if (currP == 0){
 										if (arraySum(p1Arr) > 0){
-											alert("P!AYER 1 LOST BY ILLEGALLY POTTING THE 8 BALL");
+											alert("PLAYER 1 LOST BY ILLEGALLY POTTING THE 8 BALL");
 										}
 										else{
 											alert("player 1 wins");
@@ -116,14 +117,23 @@ $(function() {
 										clearInterval();
 										refreshCue();
 									}
+									var repeatP;
+									if (currP == 0){
+										repeatP = repeatPlayer(p1Balls, arraySum(p1Arr));
+									}
+									else{
+										repeatP = repeatPlayer(p2Balls, arraySum(p2Arr));
+									}
 
 									p1Balls =arraySum(p1Arr);
 									p2Balls = arraySum(p2Arr);
 
 									$(p1).html(p1Balls +" ball(s) left");
 									$(p2).html(p2Balls +" ball(s) left");
-									currP = !currP;
-									alert("current player is " + (currP+1));
+									if (!repeatP){
+										currP = !currP;
+									}
+									updateColors();
 								}
 							} else {
 								$("div#inner").html(arr[i]);
@@ -141,6 +151,13 @@ $(function() {
 		setLine();
 		$(document).unbind('mousemove');
 	});
+
+	function repeatPlayer(oldB, newB){
+		if (newB < oldB){
+			return 1;
+		}
+		return 0;
+	}
 
 	function refreshCue() {
 		setLine();
@@ -164,7 +181,31 @@ $(function() {
 		})
 	}
 
+	function updateColors(){
+		if (currP == 0){
+			document.getElementById("player1").style.color = "red";
+			document.getElementById("player2").style.color = "black";
+		}
+		else{
+			document.getElementById("player2").style.color = "red";
+			document.getElementById("player1").style.color = "black";
+		}
+	}
 
+	function loser (player){
+		$.post("loser", { // POST REQUEST.
+			loserPlayer: player
+		}, function (rep){
+			
+		});
+	}
+	function winner (player){
+		$.post("winner", { // POST REQUEST.
+			winner: player
+		}, function (rep){
+			
+		});
+	}
 
 	function setLine() { // put it with cue ball
 		var coord = svgToCanvas($(cue).attr("cx"), $(cue).attr("cy")); // convert cue to real coordinates
